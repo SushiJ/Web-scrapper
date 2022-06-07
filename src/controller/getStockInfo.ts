@@ -1,15 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import cheerio from 'cheerio';
 import axios from 'axios';
 import { metrics } from '../constants';
 
-async function getStockInfo(req: Request, res: Response, next: NextFunction) {
+async function getStockInfo(req: Request, res: Response) {
   const { ticker } = req.params;
-  const { key } = req.query;
-
-  if (!ticker || !key) {
-    res.status(400).send({ message: 'Please provide key and ticker' });
-  }
 
   try {
     const stockInfo = await Promise.all(
@@ -59,7 +54,8 @@ async function getStockInfo(req: Request, res: Response, next: NextFunction) {
         }
       })
     );
-    res.status(200).send({
+
+    res.status(200).json({
       [ticker]: stockInfo.reduce((acc, curr) => {
         return { ...acc, [Object.keys(curr)[0]]: Object.values(curr)[0] };
       }, {}),
