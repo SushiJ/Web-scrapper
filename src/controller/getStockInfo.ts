@@ -5,6 +5,12 @@ import { metrics } from '../constants';
 
 async function getStockInfo(req: Request, res: Response) {
   const { ticker } = req.params;
+  const { key } = req.query;
+
+  if (!ticker || !key) {
+    res.status(400).send({ message: 'Please provide key and ticker' });
+    return;
+  }
 
   try {
     const stockInfo = await Promise.all(
